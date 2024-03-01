@@ -21,40 +21,46 @@ At the start of the workflow, publish an event game-session-request.started to a
 
 ```json
 {
-  "event": "game-session-request.requested",
-  "timestamp": "<timestamp>",
-  "details": {
+  "source": "code-challenge",
+  "detail-type": "game-session-request.requested",
+  "detail": {
+    "sessionId": "<unique_session_id>",
+    "gameDetails": {
+      "hostname": "<hostname>",
+      "players": <number_of_players>,
+      "map": "<game_map>",
+      "mode": "<game_mode>"
+    }
+  }
+}
+```
+- **game-session-request.started**
+```json
+{
+  "source": "code-challenge",
+  "detail-type": "game-session-request.started",
+  "detail": {
     "sessionId": "<unique_session_id>"
   }
 }
 ```
-  - **game-session-request.started**
+- **game-session-request.failed**
 ```json
 {
-  "event": "game-session-request.started",
-  "timestamp": "<timestamp>",
-  "details": {
-    "sessionId": "<unique_session_id>"
-  }
-}
-```
-    - **game-session-request.failed**
-```json
-{
-  "event": "game-session-request.failed",
-  "timestamp": "<timestamp>",
-  "details": {
+  "source": "code-challenge",
+  "detail-type": "game-session-request.failed",
+  "detail": {
     "sessionId": "<unique_session_id>",
     "error": "<error_message>"
   }
 }
 ```
-  - **game-session-request.finished**
+- **game-session-request.finished**
 ```json
 {
+  "source": "code-challenge",
   "event": "game-session-request.finished",
-  "timestamp": "<timestamp>",
-  "details": {
+  "detail": {
     "sessionId": "<unique_session_id>",
     "gameDetails": {
       "hostname": "<hostname>",
