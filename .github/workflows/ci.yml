@@ -7,8 +7,8 @@ jobs:
   terraform-init:
       runs-on: ubuntu-latest
       env:
-        ACCESS_TOKEN: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        ACCESS_TOKEN: ${{ vars.ACCESS_TOKEN }}
+        SECRET_KEY: ${{ vars.SECRET_KEY }}
         TF_VAR_access: ${{ secrets.AWS_ACCESS_KEY_ID }}
         TF_VAR_secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         TF_VAR_role-arn: ${{ secrets.AWS_ROLE_ARN }}   
@@ -20,7 +20,7 @@ jobs:
         with:
           terraform_version: "1.1.7"
       - run: echo "Passei daqui"        
-      - run: echo -e "[default]\naws_access_key_id = ${{ vars.ACCESS_TOKEN }}\naws_secret_access_key = ${{ vars.SECRET_KEY }}" > credentials
+      - run: echo -e "[default]\naws_access_key_id = $ACCESS_TOKEN\naws_secret_access_key = $SECRET_KEY" > credentials
       - run: cat credentials
       - run: cd terraform && terraform init
 
