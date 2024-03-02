@@ -6,6 +6,7 @@ on:
 jobs:
   terraform-init:
       runs-on: ubuntu-latest
+      environment: aws-credentials
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
@@ -26,6 +27,7 @@ jobs:
 
   terraform-validate:
       runs-on: ubuntu-latest
+      environment: aws-credentials1
       env:
         ACCESS_TOKEN: ${{ secrets.AWS_ACCESS_KEY_ID }}
         SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -44,6 +46,7 @@ jobs:
     
   terraform-plan:      
       runs-on: ubuntu-latest
+      environment: aws-credentials1      
       env:
         ACCESS_TOKEN: ${{ secrets.AWS_ACCESS_KEY_ID }}
         SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -62,6 +65,7 @@ jobs:
     
   terraform-apply:      
       runs-on: ubuntu-latest
+      environment: aws-credentials1      
       env:
         ACCESS_TOKEN: ${{ secrets.AWS_ACCESS_KEY_ID }}
         SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -80,6 +84,7 @@ jobs:
 
   terraform-destroy:
       runs-on: ubuntu-latest
+      environment: aws-credentials1      
       env:
         ACCESS_TOKEN: ${{ secrets.AWS_ACCESS_KEY_ID }}
         SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
