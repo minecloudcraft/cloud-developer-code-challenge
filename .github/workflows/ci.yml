@@ -18,7 +18,7 @@ jobs:
           base_repository_branch: develop
           github_org: mtkaczjr
           repository_name: cloud-developer-code-challenge
-          pr_reviewer: mtkaczjr, anderson.carvalho@minecloudcraft.com 
+          pr_reviewer: mtkaczjr
           time_limit: 3600
           github_token: ${{ secrets.GITHUB_TOKEN }}      
       - uses: actions/checkout@v3
