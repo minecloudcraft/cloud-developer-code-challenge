@@ -20,7 +20,7 @@ jobs:
         with:
           terraform_version: "1.1.7"
       - run: echo "Passei daqui"        
-      - run: echo -e "[default]\naws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}\naws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}" > credentials
+      - run: echo -e "[default]\naws_access_key_id = \"$ACCESS_TOKEN\"\naws_secret_access_key = \"$SECRET_KEY\"" > credentials
       - run: cat credentials
       - run: cd terraform && terraform init
 
