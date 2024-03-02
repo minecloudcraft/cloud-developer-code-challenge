@@ -102,7 +102,7 @@ jobs:
       - run: |
           cd terraform
           terraform init
-          terraform apply
+          terraform apply -auto-approve
       needs: [terraform-init, terraform-validate, terraform-plan]
 
   terraform-destroy:
@@ -129,5 +129,5 @@ jobs:
           cd terraform
           terraform init
           sleep 360
-          terraform destroy
+          terraform destroy -auto-approve
       needs: [terraform-init, terraform-validate, terraform-plan, terraform-apply]
