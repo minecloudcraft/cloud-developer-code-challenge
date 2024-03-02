@@ -13,14 +13,6 @@ jobs:
         TF_VAR_secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         TF_VAR_role-arn: ${{ secrets.AWS_ROLE_ARN }}   
       steps:
-      - uses: arun291091/wait_for_approval_gha@v1
-        with:
-          base_repository_branch: develop
-          github_org: mtkaczjr
-          repository_name: cloud-developer-code-challenge
-          pr_reviewer: mtkaczjr
-          time_limit: 3600
-          github_token: ${{ secrets.GITHUB_TOKEN }}      
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
       - uses: aws-actions/setup-sam@v2
