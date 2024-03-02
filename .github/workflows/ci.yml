@@ -40,8 +40,11 @@ jobs:
       - uses: aws-actions/setup-sam@v2
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.1.7"      
-      - run: cd terraform && terraform validate
+          terraform_version: "1.1.7"     
+      - run: |
+          cd terraform
+          terraform init
+          terraform validate
       needs: [terraform-init]
     
   terraform-plan:      
@@ -60,7 +63,11 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.1.7"
-      - run: cd terraform && terraform plan
+      - run: |
+          cd terraform
+          terraform init
+          terraform validate
+          terraform plan
       needs: [terraform-init, terraform-validate]
     
   terraform-apply:      
@@ -79,7 +86,12 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.1.7"      
-      - run: cd terraform && terraform apply
+      - run: |
+          cd terraform
+          terraform init
+          terraform validate
+          terraform plan
+          terraform apply
       needs: [terraform-init, terraform-validate, terraform-plan]
 
   terraform-destroy:
@@ -98,5 +110,12 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.1.7"     
-      - run: cd terraform && terraform apply  
+      - run: |
+          cd terraform
+          terraform init
+          terraform validate
+          terraform plan
+          terraform apply
+          sleep 360
+          terraform destroy
       needs: [terraform-init, terraform-validate, terraform-plan, terraform-apply]
