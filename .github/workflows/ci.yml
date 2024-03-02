@@ -1,7 +1,6 @@
 on:
-  push:
-    branches:
-      - develop
+  workflow_dispatch:
+
 jobs:
   terraform-init:
       runs-on: ubuntu-latest
@@ -15,11 +14,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
       - uses: aws-actions/setup-sam@v2
-      - uses: aws-actions/configure-aws-credentials@v1
+      - uses: hashicorp/setup-terraform@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+          terraform_version: "1.1.7"      
       - run: terraform init
 
   terraform-validate:
@@ -34,12 +31,11 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
       - uses: aws-actions/setup-sam@v2
-      - uses: aws-actions/configure-aws-credentials@v1
+      - uses: hashicorp/setup-terraform@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+          terraform_version: "1.1.7"      
       - run: terraform validate
+      needs: [terraform-init]
     
   terraform-plan:      
       runs-on: ubuntu-latest
@@ -53,12 +49,11 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
       - uses: aws-actions/setup-sam@v2
-      - uses: aws-actions/configure-aws-credentials@v1
+      - uses: hashicorp/setup-terraform@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+          terraform_version: "1.1.7"
       - run: terraform plan
+      needs: [terraform-init, terraform-validate]
     
   terraform-apply:      
       runs-on: ubuntu-latest
@@ -72,12 +67,11 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
       - uses: aws-actions/setup-sam@v2
-      - uses: aws-actions/configure-aws-credentials@v1
+      - uses: hashicorp/setup-terraform@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+          terraform_version: "1.1.7"      
       - run: terraform apply
+      needs: [terraform-init, terraform-validate, terraform-plan]
 
   terraform-destroy:
       runs-on: ubuntu-latest
@@ -91,9 +85,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
       - uses: aws-actions/setup-sam@v2
-      - uses: aws-actions/configure-aws-credentials@v1
+      - uses: hashicorp/setup-terraform@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+          terraform_version: "1.1.7"      
       - run: terraform apply  
+      needs: [terraform-init, terraform-validate, terraform-plan, terraform-apply]
