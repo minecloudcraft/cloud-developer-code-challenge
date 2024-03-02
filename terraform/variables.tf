@@ -31,7 +31,7 @@ variable "session-id" {
 variable "role-arn" {
   description = "The Amazon IAM Rode"
   type        = string
-  default     = ""
+  default     = "arn:aws:iam::049137524180:role/functions"
 }
 
 variable "function-name" {
