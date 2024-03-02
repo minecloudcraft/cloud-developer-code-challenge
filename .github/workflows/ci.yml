@@ -27,23 +27,23 @@ jobs:
 
   terraform-validate:
       runs-on: ubuntu-latest
-      environment: aws-credential
+      environment: aws-credentials
       env:
         ACCESS_TOKEN: ${{ vars.ACCESS_TOKEN }}
         SECRET_KEY: ${{ vars.SECRET_KEY }}
         TF_VAR_access: ${{ secrets.AWS_ACCESS_KEY_ID }}
         TF_VAR_secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        TF_VAR_role-arn: ${{ secrets.AWS_ROLE_ARN }}   
+        TF_VAR_role_arn: ${{ secrets.AWS_ROLE_ARN }}
       steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
       - uses: aws-actions/setup-sam@v2
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.1.7" 
+          terraform_version: "1.1.7"
       - run: |
           echo -e "[default]\naws_access_key_id = $ACCESS_TOKEN\naws_secret_access_key = $SECRET_KEY" > credentials
-          cat credentials         
+          cat credentials   
       - run: |
           cd terraform
           terraform init
@@ -52,13 +52,39 @@ jobs:
     
   terraform-plan:      
       runs-on: ubuntu-latest
-      environment: aws-credential      
+      environment: aws-credentials
       env:
         ACCESS_TOKEN: ${{ vars.ACCESS_TOKEN }}
         SECRET_KEY: ${{ vars.SECRET_KEY }}
         TF_VAR_access: ${{ secrets.AWS_ACCESS_KEY_ID }}
         TF_VAR_secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        TF_VAR_role-arn: ${{ secrets.AWS_ROLE_ARN }}   
+        TF_VAR_role_arn: ${{ secrets.AWS_ROLE_ARN }}
+      steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+      - uses: aws-actions/setup-sam@v2
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.1.7"
+      - run: |
+          echo -e "[default]\naws_access_key_id = $ACCESS_TOKEN\naws_secret_access_key = $SECRET_KEY" > credentials
+          cat credentials       
+      - run: |
+          cd terraform
+          terraform init
+          terraform validate
+          terraform plan
+      needs: [terraform-init, terraform-validate]
+    
+  terraform-apply:      
+      runs-on: ubuntu-latest
+      environment: aws-credentials
+      env:
+        ACCESS_TOKEN: ${{ vars.ACCESS_TOKEN }}
+        SECRET_KEY: ${{ vars.SECRET_KEY }}
+        TF_VAR_access: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        TF_VAR_secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        TF_VAR_role_arn: ${{ secrets.AWS_ROLE_ARN }}
       steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
@@ -74,54 +100,28 @@ jobs:
           terraform init
           terraform validate
           terraform plan
-      needs: [terraform-init, terraform-validate]
-    
-  terraform-apply:      
-      runs-on: ubuntu-latest
-      environment: aws-credential      
-      env:
-        ACCESS_TOKEN: ${{ vars.ACCESS_TOKEN }}
-        SECRET_KEY: ${{ vars.SECRET_KEY }}
-        TF_VAR_access: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        TF_VAR_secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        TF_VAR_role-arn: ${{ secrets.AWS_ROLE_ARN }}      
-      steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
-      - uses: aws-actions/setup-sam@v2
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: "1.1.7"    
-      - run: |
-          echo -e "[default]\naws_access_key_id = $ACCESS_TOKEN\naws_secret_access_key = $SECRET_KEY" > credentials
-          cat credentials            
-      - run: |
-          cd terraform
-          terraform init
-          terraform validate
-          terraform plan
           terraform apply
       needs: [terraform-init, terraform-validate, terraform-plan]
 
   terraform-destroy:
       runs-on: ubuntu-latest
-      environment: aws-credential      
+      environment: aws-credentials
       env:
         ACCESS_TOKEN: ${{ vars.ACCESS_TOKEN }}
         SECRET_KEY: ${{ vars.SECRET_KEY }}
         TF_VAR_access: ${{ secrets.AWS_ACCESS_KEY_ID }}
         TF_VAR_secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        TF_VAR_role-arn: ${{ secrets.AWS_ROLE_ARN }}   
+        TF_VAR_role_arn: ${{ secrets.AWS_ROLE_ARN }}
       steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
       - uses: aws-actions/setup-sam@v2
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.1.7"     
+          terraform_version: "1.1.7"
       - run: |
           echo -e "[default]\naws_access_key_id = $ACCESS_TOKEN\naws_secret_access_key = $SECRET_KEY" > credentials
-          cat credentials          
+          cat credentials     
       - run: |
           cd terraform
           terraform init
