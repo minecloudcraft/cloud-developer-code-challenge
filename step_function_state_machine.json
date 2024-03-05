@@ -1,0 +1,141 @@
+{
+    "Comment": "A state machine to include events in a event bus and its content on a dynamo db table.",
+    "StartAt": "EventBridge PutEvent game-session-request.requested",
+    "States": {
+      "EventBridge PutEvent game-session-request.requested": {
+        "Type": "Task",
+        "Resource": "arn:aws:states:::events:putEvents",
+        "Parameters": {
+          "Entries": [
+            {
+              "Detail": {
+                "sessionId.$": "$.detail.sessionId",
+                "hostname.$": "$.detail.gameDetails.hostname",
+                "players.$": "$.detail.gameDetails.players",
+                "map.$": "$.detail.gameDetails.map",
+                "mode.$": "$.detail.gameDetails.mode"
+              },
+              "DetailType": "MyDetailType",
+              "EventBusName": "my-event-bus",
+              "Source": "MySource"
+            }
+          ]
+        },
+        "Next": "EventBridge PutEvent game-session-request.started",
+        "ResultPath": "$.stateResults",
+        "Catch": [
+          {
+            "ErrorEquals": [
+              "States.ALL"
+            ],
+            "Next": "EventBridge PutEvent game-session-request.failed"
+          }
+        ]
+      },
+      "EventBridge PutEvent game-session-request.started": {
+        "Type": "Task",
+        "Resource": "arn:aws:states:::events:putEvents",
+        "Parameters": {
+          "Entries": [
+            {
+              "Detail": {
+                "sessionId.$": "$.detail.sessionId"
+              },
+              "DetailType": "MyDetailType",
+              "EventBusName": "my-event-bus",
+              "Source": "MySource"
+            }
+          ]
+        },
+        "Next": "DynamoDB PutItem",
+        "ResultPath": "$.stateResults",
+        "Catch": [
+          {
+            "ErrorEquals": [
+              "States.ALL"
+            ],
+            "Next": "EventBridge PutEvent game-session-request.failed"
+          }
+        ]
+      },
+      "DynamoDB PutItem": {
+        "Type": "Task",
+        "Resource": "arn:aws:states:::dynamodb:putItem",
+        "Parameters": {
+          "TableName": "my-dynamo-db-table",
+          "Item": {
+            "sessionId": {
+              "S.$": "$.detail.sessionId"
+            },
+            "hostname": {
+              "S.$": "$.detail.gameDetails.hostname"
+            },
+            "players": {
+              "N.$": "$.detail.gameDetails.players"
+            },
+            "map": {
+              "S.$": "$.detail.gameDetails.map"
+            },
+            "mode": {
+              "S.$": "$.detail.gameDetails.mode"
+            }
+          }
+        },
+        "Next": "EventBridge PutEvent game-session-request.finished",
+        "ResultPath": "$.stateResults",
+        "Catch": [
+          {
+            "ErrorEquals": [
+              "States.ALL"
+            ],
+            "Next": "EventBridge PutEvent game-session-request.failed",
+            "ResultPath": "$.stateResults"
+          }
+        ]
+      },
+      "EventBridge PutEvent game-session-request.finished": {
+        "Type": "Task",
+        "Resource": "arn:aws:states:::events:putEvents",
+        "Parameters": {
+          "Entries": [
+            {
+              "Detail": {
+                "sessionId.$": "$.detail.sessionId",
+                "hostname.$": "$.detail.gameDetails.hostname",
+                "players.$": "$.detail.gameDetails.players",
+                "map.$": "$.detail.gameDetails.map",
+                "mode.$": "$.detail.gameDetails.mode"
+              },
+              "DetailType": "MyDetailType",
+              "EventBusName": "my-event-bus",
+              "Source": "MySource"
+            }
+          ]
+        },
+        "ResultPath": "$.stateResults",
+        "End": true
+      },
+      "EventBridge PutEvent game-session-request.failed": {
+        "Type": "Task",
+        "Resource": "arn:aws:states:::events:putEvents",
+        "Parameters": {
+          "Entries": [
+            {
+              "Detail": {
+                "sessionId.$": "$.detail.sessionId",
+                "error": "An error occurred during the workflow."
+              },
+              "DetailType": "MyDetailType",
+              "EventBusName": "my-event-bus",
+              "Source": "MySource"
+            }
+          ]
+        },
+        "ResultPath": "$.stateResults",
+        "Next": "Fail"
+      },
+      "Fail": {
+        "Type": "Fail"
+      }
+    }
+  }
