@@ -1,0 +1,23 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "CloudFormation template for EventBridge rule 'Workflow_start'",
+    "Resources": {
+      "EventRule0": {
+        "Type": "AWS::Events::Rule",
+        "Properties": {
+          "Description": "Start the workflow from step function",
+          "EventBusName": "my-event-bus",
+          "EventPattern": {
+            "source": ["code-challenge"]
+          },
+          "Name": "Workflow_start",
+          "State": "ENABLED",
+          "Targets": [{
+            "Id": "Id720fcbce-72e6-4f06-9310-c61b522465f0",
+            "Arn": "arn:aws:states:us-east-2:637423309112:stateMachine:StateMachine",
+            "RoleArn": "arn:aws:iam::637423309112:role/service-role/Amazon_EventBridge_Invoke_Step_Functions_1403132991"
+          }]
+        }
+      }
+    }
+  }
