@@ -6,10 +6,8 @@ import { SnsSendNotificationRepository } from "../../../infra/simple-notificatio
 export const makeDbSessionCreationNotificationUseCase = (): SessionCreationNotification => {
 
   const sendNotificationRepository = new SnsSendNotificationRepository()
-  const publishEventRepository = new EbPublishEventRepository()
 
   return new DsSessionCreationNotification(
-    sendNotificationRepository,
-    publishEventRepository
+    sendNotificationRepository
   )
 }
