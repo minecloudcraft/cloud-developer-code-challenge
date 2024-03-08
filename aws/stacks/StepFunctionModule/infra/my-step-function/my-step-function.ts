@@ -11,44 +11,58 @@ export function makeMyStepFunction (app: Construct) {
     {
       stateMachineName: 'my-step-function',
       definitionBody: DefinitionBody.fromChainable(
-        new LambdaInvoke(
+        new EventBridgePutEvents(
           app,
-          'InvokeNotificationLambda',
+          'InvokeStartEventLambda',
           {
-            lambdaFunction: importLambda(
-              app,
-              'stacks.LambdaModule.infra.session-creation-notification'
-            )
+            entries: [
+              {
+                source: 'code-challenge',
+                detail: TaskInput.fromText(`{ "sessionId": "<unique_session_id>" }`),
+                detailType: 'notify-player-workflow.started'
+              }
+            ]
           }
-        )
-        .next(new Choice(app, 'Choice')
-          .when(Condition.stringEquals('$.status', '200'),
-            new EventBridgePutEvents(
-              app,
-              'InvokeSuccessEventLambda',
-              {
-                entries: [
-                  {
-                    source: 'code-challenge',
-                    detail: TaskInput.fromText(`{ "sessionId": "<unique_session_id>",  "message": "Game session notification sent successfully." }`),
-                    detailType: 'notify-player-workflow.finished'
-                  }
-                ]
-              }
-            )
-          ).otherwise(
-            new EventBridgePutEvents(
-              app,
-              'InvokeFailureEventLambda',
-              {
-                entries: [
-                  {
-                    source: 'code-challenge',
-                    detail: TaskInput.fromText(`{ "sessionId": "<unique_session_id>", "error": "<error_message>" }`),
-                    detailType: 'notify-player-workflow.failed'
-                  }
-                ]
-              }
+        ).next(
+          new LambdaInvoke(
+            app,
+            'InvokeNotificationLambda',
+            {
+              lambdaFunction: importLambda(
+                app,
+                'stacks.LambdaModule.infra.session-creation-notification'
+              )
+            }
+          )
+          .next(new Choice(app, 'Choice')
+            .when(Condition.stringEquals('$.status', '200'),
+              new EventBridgePutEvents(
+                app,
+                'InvokeSuccessEventLambda',
+                {
+                  entries: [
+                    {
+                      source: 'code-challenge',
+                      detail: TaskInput.fromText(`{ "sessionId": "<unique_session_id>",  "message": "Game session notification sent successfully." }`),
+                      detailType: 'notify-player-workflow.finished'
+                    }
+                  ]
+                }
+              )
+            ).otherwise(
+              new EventBridgePutEvents(
+                app,
+                'InvokeFailureEventLambda',
+                {
+                  entries: [
+                    {
+                      source: 'code-challenge',
+                      detail: TaskInput.fromText(`{ "sessionId": "<unique_session_id>", "error": "<error_message>" }`),
+                      detailType: 'notify-player-workflow.failed'
+                    }
+                  ]
+                }
+              )
             )
           )
         )

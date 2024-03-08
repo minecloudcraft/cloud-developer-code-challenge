@@ -1,6 +1,6 @@
-import { Stack, StackProps } from "aws-cdk-lib";
-import { LambdaModule } from "./infra";
-import { Construct } from "constructs";
+import { Stack, StackProps } from 'aws-cdk-lib'
+import { LambdaModule } from './infra'
+import { Construct } from 'constructs'
 
 export class LambdaStack extends Stack {
   constructor (app: Construct, name: string, props?: StackProps) {

@@ -1,10 +1,10 @@
 import { Stack, StackProps } from 'aws-cdk-lib'
-import { StepFunctionModule } from './infra'
 import { Construct } from 'constructs'
+import { EventBusModule } from './infra/event-bus'
 
-export class StepFunctionStack extends Stack {
+export class EventBridgeStack extends Stack {
   constructor (app: Construct, name: string, props?: StackProps) {
     super(app, name, props)
-    new StepFunctionModule(this, 'StepFunctionModule')
+    new EventBusModule(this, 'EventBridgeModule', props)
   }
 }
