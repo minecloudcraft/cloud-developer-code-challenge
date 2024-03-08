@@ -1,0 +1,15 @@
+{
+  "name": "cloud-developer-code-challenge",
+  "version": "1.0.0",
+  "description": "Minecloudcraft - Cloud Developer - Code Challenges Placeholder",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Frederico Azzolini",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-eventbridge": "^3.529.0",
+    "@aws-sdk/client-sns": "^3.529.0"
+  }
+}
