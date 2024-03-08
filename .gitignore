@@ -38,4 +38,3 @@ node_modules
 package-lock.json
 cdk.out
 .vscode
-converage/*.*
