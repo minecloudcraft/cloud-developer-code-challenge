@@ -10,9 +10,9 @@ export class SessionCreationNotificationController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const event = httpRequest.body
+      const detail = httpRequest.body
 
-      const success = await this.sessionCreationNotification.send(event)
+      const success = await this.sessionCreationNotification.send(detail)
   
       return ok({success})
     } catch (error) {

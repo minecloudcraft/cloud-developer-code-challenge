@@ -1,6 +1,6 @@
 export type SessionCreationEvent = {
   source: string,
-  detailType: string,
+  "detail-type": string,
   detail: {
     sessionId: string,
     gameDetails: {

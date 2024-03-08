@@ -1,5 +1,6 @@
 export type NotificationData = {
   body: { [att: string]: any }
+  subject: string
   topic: string
 }
 

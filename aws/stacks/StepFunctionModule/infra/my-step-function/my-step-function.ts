@@ -1,10 +1,13 @@
-import { StateMachine, Choice, Condition, DefinitionBody, TaskInput } from 'aws-cdk-lib/aws-stepfunctions'
+import { StateMachine, Choice, Condition, DefinitionBody, JsonPath, TaskInput } from 'aws-cdk-lib/aws-stepfunctions'
 import { LambdaInvoke, EventBridgePutEvents } from 'aws-cdk-lib/aws-stepfunctions-tasks'
 import { StringParameter, ParameterTier } from 'aws-cdk-lib/aws-ssm'
 import { Construct } from 'constructs'
 import { importLambda } from '../../../helpers/import-lambda'
+import { importEventBus } from '../../../helpers/import-event-bus'
 
 export function makeMyStepFunction (app: Construct) {
+  const eventBus = importEventBus(app, 'modules.event-bridge.event-bus.my-event-bus')
+
   const stateFunction = new StateMachine(
     app,
     'MyStateMachine',
@@ -19,10 +22,12 @@ export function makeMyStepFunction (app: Construct) {
               {
                 source: 'code-challenge',
                 detail: TaskInput.fromText(`{ "sessionId": "<unique_session_id>" }`),
-                detailType: 'notify-player-workflow.started'
+                detailType: 'notify-player-workflow.started',
+                eventBus
               }
-            ]
-          }
+            ],
+            resultPath: JsonPath.DISCARD
+          },
         ).next(
           new LambdaInvoke(
             app,
@@ -31,11 +36,12 @@ export function makeMyStepFunction (app: Construct) {
               lambdaFunction: importLambda(
                 app,
                 'stacks.LambdaModule.infra.session-creation-notification'
-              )
+              ),
+              resultPath: '$.output'
             }
           )
           .next(new Choice(app, 'Choice')
-            .when(Condition.stringEquals('$.status', '200'),
+            .when(Condition.numberEquals('$.output.Payload.statusCode', 200),
               new EventBridgePutEvents(
                 app,
                 'InvokeSuccessEventLambda',
@@ -43,8 +49,9 @@ export function makeMyStepFunction (app: Construct) {
                   entries: [
                     {
                       source: 'code-challenge',
-                      detail: TaskInput.fromText(`{ "sessionId": "<unique_session_id>",  "message": "Game session notification sent successfully." }`),
-                      detailType: 'notify-player-workflow.finished'
+                      detail: TaskInput.fromText(`{ "sessionId": "$.detail.sessionId",  "message": "Game session notification sent successfully." }`),
+                      detailType: 'notify-player-workflow.finished',
+                      eventBus
                     }
                   ]
                 }
@@ -57,8 +64,9 @@ export function makeMyStepFunction (app: Construct) {
                   entries: [
                     {
                       source: 'code-challenge',
-                      detail: TaskInput.fromText(`{ "sessionId": "<unique_session_id>", "error": "<error_message>" }`),
-                      detailType: 'notify-player-workflow.failed'
+                      detail: TaskInput.fromText(`{ "sessionId": "$.detail.sessionId", "error": "<error_message>" }`),
+                      detailType: 'notify-player-workflow.failed',
+                      eventBus
                     }
                   ]
                 }
