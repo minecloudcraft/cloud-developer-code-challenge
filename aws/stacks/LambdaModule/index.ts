@@ -1,5 +1,5 @@
 import { Stack, StackProps } from "aws-cdk-lib";
-import { LambdaModule } from "./infra/api";
+import { LambdaModule } from "./infra";
 import { Construct } from "constructs";
 
 export class LambdaStack extends Stack {
