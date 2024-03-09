@@ -10,8 +10,7 @@ export class SnsSendNotificationRepository implements SendNotificationRepository
   }
 
   async send (data: NotificationData): Promise<void> {
-    console.log('data: ', JSON.stringify(data))
-
+    // Message to be sent to the topic
     const message = {
       TargetArn: data.topic,
       Message: JSON.stringify(data.body),
@@ -19,6 +18,7 @@ export class SnsSendNotificationRepository implements SendNotificationRepository
     } as PublishCommandInput
     console.log('message: ', JSON.stringify(message))
 
+    // Sending command
     await this.snsClient.send(new PublishCommand(message))
   }
 }

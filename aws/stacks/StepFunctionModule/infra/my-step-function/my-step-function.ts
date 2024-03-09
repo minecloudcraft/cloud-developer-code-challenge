@@ -6,15 +6,19 @@ import { importLambda } from '../../../helpers/import-lambda'
 import { importEventBus } from '../../../helpers/import-event-bus'
 
 export function makeMyStepFunction (app: Construct) {
+  // Import Event-Bus using the parameter created when deploying EventBridgeModule
   const eventBus = importEventBus(app, 'modules.event-bridge.event-bus.my-event-bus')
 
+  // Creates State-Machine
   const stateFunction = new StateMachine(
     app,
     'MyStateMachine',
     {
       stateMachineName: 'my-step-function',
       stateMachineType: StateMachineType.EXPRESS,
+      // Defines all states of the StateMachine
       definitionBody: DefinitionBody.fromChainable(
+        // First step publishes started event on Event-Bus
         new EventBridgePutEvents(
           app,
           'InvokeStartEventLambda',
@@ -30,6 +34,7 @@ export function makeMyStepFunction (app: Construct) {
             resultPath: JsonPath.DISCARD
           },
         ).next(
+          // Second step publishes started event on Event-Bus
           new LambdaInvoke(
             app,
             'InvokeNotificationLambda',
@@ -42,7 +47,9 @@ export function makeMyStepFunction (app: Construct) {
             }
           )
           .next(new Choice(app, 'Choice')
+          // Third step is a choice, depending on the Lambda result
             .when(Condition.numberEquals('$.output.Payload.statusCode', 200),
+              // If Lambda result is success (200), publishes a finished event on Event-Bus
               new EventBridgePutEvents(
                 app,
                 'InvokeSuccessEventLambda',
@@ -58,6 +65,7 @@ export function makeMyStepFunction (app: Construct) {
                 }
               )
             ).otherwise(
+              // If Lambda result is success (different than 200), publishes a failed event on Event-Bus
               new EventBridgePutEvents(
                 app,
                 'InvokeFailureEventLambda',
@@ -79,6 +87,7 @@ export function makeMyStepFunction (app: Construct) {
     }
   )
 
+  // Creates parameter for easy access of the ARN
   new StringParameter(app, 'modules.step-function.my-step-function', {
     parameterName: 'modules.step-function.my-step-function',
     stringValue: stateFunction.stateMachineArn,

@@ -11,7 +11,7 @@ export class PsGetParameterRepository implements GetParameterRepository {
   }
 
   async get (parameterId: string): Promise<ParameterModel> {
-    console.log(parameterId)
+    // Get parameter from Parameter Store
     const response = await this.ssmClient.send(new GetParameterCommand({
       Name: parameterId
     }))

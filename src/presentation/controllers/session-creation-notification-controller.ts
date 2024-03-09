@@ -10,13 +10,17 @@ export class SessionCreationNotificationController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
+      // Gets the desired data from the request
       const detail = httpRequest.body
 
+      // Calls the implementation
       const success = await this.sessionCreationNotification.send(detail)
   
+      // Returns a OK() response (statusCode 200)
       return ok({success})
     } catch (error) {
     console.log('error: ', error)
+    // Returns a error response (statusCode 500)
     return serverError(error as Error)
     }
   }

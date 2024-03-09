@@ -9,8 +9,11 @@ import { env } from '../../../../../env'
 import { importRole } from '../../../helpers/import-role'
 
 export function makeSessionCreationNotificationApiLambda (app: Construct) {
-  const functionName = 'Api-Notification-sessionCreationNotification'
+  // Import Role using the parameter created when deploying IamModule
   const importedRole = importRole(app, 'SessionCreationNotificationApiLambda', env.awsLambdaRole)
+
+  const functionName = 'Api-Notification-sessionCreationNotification'
+  // Creates the Lambda from Nodejs
   const resource = new NodejsFunction(app, functionName, {
     handler: 'handler',
     functionName,
@@ -20,9 +23,10 @@ export function makeSessionCreationNotificationApiLambda (app: Construct) {
     logRetention: RetentionDays.SIX_MONTHS,
     timeout: Duration.seconds(15)
   })
-  const stringParameterName = 'stacks.LambdaModule.infra.session-creation-notification'
-  new StringParameter(app, stringParameterName, {
-    parameterName: stringParameterName,
+
+  // Creates parameter for easy access of the ARN
+  new StringParameter(app, 'stacks.LambdaModule.infra.session-creation-notification', {
+    parameterName: 'stacks.LambdaModule.infra.session-creation-notification',
     stringValue: resource.functionArn,
     tier: ParameterTier.STANDARD
   })

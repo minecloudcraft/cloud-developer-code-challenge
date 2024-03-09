@@ -5,9 +5,11 @@ import { SnsSendNotificationRepository } from '../../../infra/simple-notificatio
 
 export const makeDbSessionCreationNotificationUseCase = (): SessionCreationNotification => {
 
+  // Instantiate the desired infraestructure implementation
   const getParameterRepository = new PsGetParameterRepository()
   const sendNotificationRepository = new SnsSendNotificationRepository()
 
+  // Instantiate the implementation
   return new DsSessionCreationNotification(
     getParameterRepository,
     sendNotificationRepository
