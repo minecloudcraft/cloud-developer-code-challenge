@@ -1,4 +1,4 @@
-import { StateMachine, Choice, Condition, DefinitionBody, JsonPath, TaskInput } from 'aws-cdk-lib/aws-stepfunctions'
+import { StateMachine, Choice, Condition, DefinitionBody, JsonPath, TaskInput, StateMachineType } from 'aws-cdk-lib/aws-stepfunctions'
 import { LambdaInvoke, EventBridgePutEvents } from 'aws-cdk-lib/aws-stepfunctions-tasks'
 import { StringParameter, ParameterTier } from 'aws-cdk-lib/aws-ssm'
 import { Construct } from 'constructs'
@@ -13,6 +13,7 @@ export function makeMyStepFunction (app: Construct) {
     'MyStateMachine',
     {
       stateMachineName: 'my-step-function',
+      stateMachineType: StateMachineType.EXPRESS,
       definitionBody: DefinitionBody.fromChainable(
         new EventBridgePutEvents(
           app,
