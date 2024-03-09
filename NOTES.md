@@ -53,3 +53,66 @@ All resources have a parameter created to store its ARN. This is done to facilit
 ### Deployment
 
 - npx cdk deploy **RuleModule** --profile *code-challenge-profile*
+
+### Results
+Initial event
+
+     {
+            "version":  "0",
+    	    "id":  "578ac332-4ccc-11fa-6690-1ff2480c2473",
+    	    "detail-type":  "game-session-creation.finished",
+    	    "source":  "code-challenge",
+    	    "account":  "654654469287",
+    	    "time":  "2024-03-09T12:58:48Z",
+    	    "region":  "us-east-1",
+    	    "resources": [],
+    	    "detail": {
+    		    "sessionId":  "dqe56re6.f2ryt89a6.sd5aw.6d2",
+    		    "gameDetails": {
+    			    "hostname":  "localhost",
+    			    "players":  3,
+    			    "map":  "forest",
+    			    "mode":  "free"
+    		   }
+    	    }
+       }
+
+Final event (on failure)
+
+    {
+	    "version":  "0",
+	    "id":  "e71f1ea7-6167-04c4-2c3a-010a69dcb9e4",
+	    "detail-type":  "notify-player-workflow.failed",
+	    "source":  "code-challenge",
+	    "account":  "654654469287",
+	    "time":  "2024-03-09T12:58:50Z",
+	    "region":  "us-east-1",
+	    "resources": [
+		    "arn:aws:states:us-east-1:654654469287:stateMachine:my-step-function",
+		    "arn:aws:states:us-east-1:654654469287:execution:my-step-function:578ac332-4ccc-11fa-6690-1ff2480c2473_60deb865-4a7d-3a0d-005e-7960340f06d7"
+	    ],
+	    "detail": {
+		    "sessionId":  "dqe56re6.f2ryt89a6.sd5aw.6d2",
+		    "error":  "1 validation error detected: Value null at 'name' failed to satisfy constraint: Member must not be null"
+	    }
+    }
+		
+Final event (on success)
+
+    {
+	    "version":  "0",
+	    "id":  "7cccb687-6435-906c-1939-2ab8bd02d4e4",
+	    "detail-type":  "notify-player-workflow.finished",
+	    "source":  "code-challenge",
+	    "account":  "654654469287",
+	    "time":  "2024-03-09T13:03:16Z",
+	    "region":  "us-east-1",
+	    "resources": [
+		    "arn:aws:states:us-east-1:654654469287:stateMachine:my-step-function",
+		    "arn:aws:states:us-east-1:654654469287:execution:my-step-function:117b635c-9306-4951-cb03-d426c1bea21b_ba8a9ffb-1895-e837-d873-d68aac45fbf5"
+	    ],
+	    "detail": {
+		    "message":  "Game session notification sent successfully.",
+		    "sessionId":  "dqe56re6.f2ryt89a6.sd5aw.6d2"
+	    }
+    }
