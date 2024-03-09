@@ -21,7 +21,7 @@ export function makeMyStepFunction (app: Construct) {
             entries: [
               {
                 source: 'code-challenge',
-                detail: TaskInput.fromText(`{ "sessionId": "<unique_session_id>" }`),
+                detail: TaskInput.fromObject({ sessionId: JsonPath.stringAt('$.detail.sessionId') }),
                 detailType: 'notify-player-workflow.started',
                 eventBus
               }
@@ -49,7 +49,7 @@ export function makeMyStepFunction (app: Construct) {
                   entries: [
                     {
                       source: 'code-challenge',
-                      detail: TaskInput.fromText(`{ "sessionId": "$.detail.sessionId",  "message": "Game session notification sent successfully." }`),
+                      detail: TaskInput.fromObject({ sessionId: JsonPath.stringAt('$.detail.sessionId'),  message: 'Game session notification sent successfully.' }),
                       detailType: 'notify-player-workflow.finished',
                       eventBus
                     }
@@ -64,7 +64,7 @@ export function makeMyStepFunction (app: Construct) {
                   entries: [
                     {
                       source: 'code-challenge',
-                      detail: TaskInput.fromText(`{ "sessionId": "$.detail.sessionId", "error": "<error_message>" }`),
+                      detail: TaskInput.fromObject({ sessionId: JsonPath.stringAt('$.detail.sessionId'), error: JsonPath.stringAt('$.output.Payload.body.displayMessage') }),
                       detailType: 'notify-player-workflow.failed',
                       eventBus
                     }
