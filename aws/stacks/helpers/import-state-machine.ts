@@ -5,10 +5,10 @@ import { Construct } from 'constructs'
 
 export const importStepFunction = (app: Construct, parameterId: string): IStateMachine => {
   // Gets Step-Function ARN from the parameter-store
-  const stepFunctionArn = StringParameter.fromStringParameterName(app, parameterId, parameterId).stringValue
+  const stepFunctionArn = StringParameter.fromStringParameterName(app, `${parameterId}:${new Date().getTime()}`, parameterId).stringValue
 
   // Gets the Step-Function using the ARN
-  const stepFunction = StateMachine.fromStateMachineArn(app, `${parameterId}:ParameterStore`, stepFunctionArn) as StateMachine
+  const stepFunction = StateMachine.fromStateMachineArn(app, `${parameterId}:ParameterStore:${new Date().getTime()}`, stepFunctionArn) as StateMachine
 
   return stepFunction
 }
